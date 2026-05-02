@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Delivery Predictor</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      width: 350px;
+      box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 15px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #5a67d8;
+    }
+
+    #result {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>🚚 Delivery Time Predictor</h2>
+
+<label>Distance (km):</label>
+<input id="distance" type="number" placeholder="Enter distance in km">
+
+<label>Traffic:</label>
+<select id="traffic">
+  <option>Low</option>
+  <option>Medium</option>
+  <option>High</option>
+</select>
+
+<label>Weather:</label>
+<select id="weather">
+  <option>Clear</option>
+  <option>Foggy</option>
+  <option>Windy</option>
+  <option>Rainy</option>
+  <option>Snowy</option>
+</select>
+
+<label>Experience (years):</label>
+<input id="experience" type="number" placeholder="Enter years of experience">
+
+<label>Vehicle Type:</label>
+<select id="vehicle">
+  <option>Bike</option>
+  <option>Car</option>
+  <option>Scooter</option>
+</select>
+
+<label>Time of Day:</label>
+<select id="time">
+  <option>Morning</option>
+  <option>Afternoon</option>
+  <option>Evening</option>
+  <option>Night</option>
+</select>
+
+
+<button onclick="predict()">Predict</button>
+
+<h3 id="result"></h3>
+
+</div>
+
+<script>
+async function predict() {
+
+ let distance = parseFloat(document.getElementById("distance").value);
+let experience = parseFloat(document.getElementById("experience").value);
+let prep = 10;  // default value
+
+  // ❌ Check invalid
+ if (isNaN(distance) || isNaN(experience)) {
+    alert("Please fill all fields correctly");
+    return;
+  }
+
+  if (distance <= 0) {
+    alert("Distance must be greater than 0");
+    return;
+  }
+  if (distance > 20) {
+    alert("Maximum distance is 20 km!");
+    return;
+}
+
+  if (experience < 0) {
+    alert("Experience cannot be negative");
+    return;
+  }
+
+ const API_URL = "http://127.0.0.1:5000";
+const res = await fetch(`${API_URL}/predict`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      distance: distance,
+      traffic: document.getElementById("traffic").value,
+      weather: document.getElementById("weather").value,
+      experience: experience,
+      vehicle: document.getElementById("vehicle").value,
+      time: document.getElementById("time").value,
+      prep_time: prep
+    })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("result").innerText =
+    "⏱ Delivery Time: " + data.delivery_time + " minutes";
+}
+</script>
+
+</body>
+</html>
