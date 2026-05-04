@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 # FIX 3: correct path
-model = pickle.load(open('../model/model.pkl', 'rb'))
+model = pickle.load(open('model/model.pkl', 'rb'))
 
 @app.route('/')
 def home():
